@@ -20,11 +20,12 @@ public class RedisUtil {
         set(key, value);
     }
 
-    public void set(String key, String value, Long timeOut){
+    public boolean set(String key, String value, Long timeOut){
         redisTemplate.opsForValue().set(key, value);
         if(timeOut != null){
             redisTemplate.expire(key, timeOut, TimeUnit.SECONDS);
         }
+        return true;
     }
 
     public String get(String key){

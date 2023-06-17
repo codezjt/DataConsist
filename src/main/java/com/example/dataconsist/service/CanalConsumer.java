@@ -19,6 +19,7 @@ public class CanalConsumer implements RocketMQListener<MessageExt> {
 
     private final long expireTime = 600L;
 
+    // Redis消息
     @Autowired
     private RedisUtil redisUtil;
     @Override
@@ -37,14 +38,17 @@ public class CanalConsumer implements RocketMQListener<MessageExt> {
             if("INSERT".equals(type) || "UPDATE".equals(type)){
                 for (UserEntity userEntity : list){
                     String key = directory + ":" + userEntity.getId();
-                    System.out.println("INSERT OR UPDATE INFO" + (key + JSONObject.toJSONString(userEntity) + expireTime));
-                    redisUtil.set(key, JSONObject.toJSONString(userEntity), expireTime);
+                    System.out.println("INSERT OR UPDATE INFO:" + key);
+                    boolean res = redisUtil.set(key, JSONObject.toJSONString(userEntity), expireTime);
+                    if (res){
+                        System.out.println("添加成功");
+                    }
                 }
 
             }else if ("DELETE".equals(type)){
                 for(UserEntity userEntity : list){
                     String key = directory + ":" + userEntity.getId();
-                    System.out.println("DELETE INFO" + (key + JSONObject.toJSONString(userEntity) + expireTime));
+                    System.out.println("INSERT OR UPDATE INFO:" + key);
                     redisUtil.delete(key);
                 }
             }
